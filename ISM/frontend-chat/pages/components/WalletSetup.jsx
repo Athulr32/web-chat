@@ -18,7 +18,7 @@ async function login(privKey,pubKey) {
     let data = { "signature": [...sigObj.signature], "recid": sigObj.recid, "pub_key": [...pubKey], "message": msg };
 
 
-    const reqAuth = await fetch("http://localhost:8081/login", {
+    const reqAuth = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
             'Content-Type': "application/json"
@@ -38,6 +38,17 @@ async function login(privKey,pubKey) {
 
 
 function LandingPage({ createWallet }) {
+
+    let router = useRouter();
+
+    useEffect(()=>{
+
+        let token = localStorage.getItem("jwt");
+        if(token){
+            router.push("/chat")
+        }
+
+    })
 
 
 
