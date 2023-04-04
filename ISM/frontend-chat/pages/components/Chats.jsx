@@ -3,7 +3,8 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { randomBytes, createHash } from "crypto";
 import secp256k1 from "secp256k1"
 import { encrypt, decrypt, PrivateKey } from 'eciesjs'
-
+import { getCookie } from 'cookies-next';
+import { useRouter } from 'next/router';
 
 function allStorage() {
 
@@ -65,14 +66,14 @@ function allStorage() {
 
 export default function Chats() {
 
-
+    let router = useRouter()
 
     const [chats, setChats] = useState("")
     const [update, setUpdate] = useState(0);
     const [sentMessage, setSentMessage] = useState("")
     const [auth, setAuth] = useState(false);
     const [pubKey, setPubKey] = useState("");
-    const [jwt, setJWT] = useState("eyJhbGciOiJIUzI1NiJ9.eyJrZXkiOiIwMmM1NjkxYTc3ZDY3OTQyMGM2NGFlZmQ5MzM0NTFiYTE3NmE4NGM0ZmQzMjA4ZWFlMWFlNDcwOTJkZmI3NGUzMTkifQ.s8JWC0iNL4fXsklU1P7UnUpbkYhQRFQFn6XHCZyOrmU")
+    const [jwt, setJWT] = useState("")
 
     const [socketUrl, setSocketUrl] = useState('ws://localhost:8081/');
 
@@ -90,6 +91,15 @@ export default function Chats() {
 
     useEffect(() => {
 
+        if(!jwt){
+            let token = getCookie("jwt")
+            setJWT(token)
+            if(!token){
+                router.push("/")
+                
+            }
+        }
+        
 
         let allChats = allStorage()
 

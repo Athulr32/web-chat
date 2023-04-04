@@ -16,8 +16,8 @@ export default function Home() {
   return (
 
     <div>
-      {/* <WalletSetup></WalletSetup> */}
-      <Chats></Chats>
+      <WalletSetup></WalletSetup>
+      {/* <Chats></Chats> */}
     </div>
   )
 
