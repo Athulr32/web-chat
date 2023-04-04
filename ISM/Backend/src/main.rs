@@ -68,7 +68,7 @@ async fn main() {
         .layer(cors)
         .with_state(db);
 
-    axum::Server::bind(&"0.0.0.0:8081".parse().unwrap())
+    axum::Server::bind(&"0.0.0.0:8080".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();

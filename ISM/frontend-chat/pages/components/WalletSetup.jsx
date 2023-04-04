@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { generateMnemonic } from "bip39"
+import { generateMnemonic, mnemonicToSeedSync } from "bip39"
 import { ethers } from "ethers"
 import { setCookie, getCookie } from 'cookies-next';
 import { useRouter } from "next/router";
@@ -18,7 +18,7 @@ async function login(privKey,pubKey) {
     let data = { "signature": [...sigObj.signature], "recid": sigObj.recid, "pub_key": [...pubKey], "message": msg };
 
 
-    const reqAuth = await fetch("http://localhost:8081/login", {
+    const reqAuth = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
             'Content-Type': "application/json"
@@ -38,6 +38,17 @@ async function login(privKey,pubKey) {
 
 
 function LandingPage({ createWallet }) {
+
+    let router = useRouter();
+
+    useEffect(()=>{
+
+        let token = localStorage.getItem("jwt");
+        if(token){
+            router.push("/chat")
+        }
+
+    })
 
 
 
@@ -93,18 +104,25 @@ function CreateWallet() {
 
     async function walletCreated() {
 
+
+        const seed = mnemonicToSeedSync(mnemonic.join(" "));
+        let privKeyBytes = seed.slice(0,32);
+        console.log(privKeyBytes)
+        let pubKeyBytes = secp256k1.publicKeyCreate(privKeyBytes)
+        console.log(pubKeyBytes)
+
         const mnemonicWallet = ethers.Wallet.fromPhrase(mnemonic.join(" "));
         let privKey = mnemonicWallet.privateKey.slice(0,64);
         let pubKey = mnemonicWallet.publicKey;
 
-        setCookie("private_key", privKey);
-        setCookie("public_key", pubKey)
-      
-        let privKeyBuf = fromHexString(privKey)
-        let pubKeyBuf = fromHexString(pubKey);
-        console.log(privKeyBuf)
-        const auth = await login(privKeyBuf,pubKeyBuf);
-        if (auth.token) {
+        setCookie("private_key", Buffer.from(privKeyBytes).toString("hex"));
+        setCookie("public_key", Buffer.from(pubKeyBytes).toString("hex"))
+  
+
+        const auth = await login(privKeyBytes,pubKeyBytes);
+       
+        if (auth) {
+            setCookie("jwt",auth)
             router.push("/chat")
         }
         else{
