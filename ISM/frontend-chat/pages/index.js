@@ -2,9 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { randomBytes, createHash } from "crypto";
 import secp256k1 from "secp256k1"
+import Chat from './components/Chat';
 import { encrypt, decrypt, PrivateKey } from 'eciesjs'
 import Chats from './components/Chats';
 import WalletSetup from './components/WalletSetup';
+import Sidebar from './components/Sidebar';
+import style from './index.module.css'
 
 
 
@@ -15,9 +18,15 @@ export default function Home() {
 
   return (
 
-    <div>
+    <div className={style.Home}>
       {/* <WalletSetup></WalletSetup> */}
-      <Chats></Chats>
+      {/* <Chats></Chats> */}
+      {/* <ain/> */}
+      <div className={style.Home__body}>
+      <Sidebar />
+      <Chat/>
+      </div>
+     
     </div>
   )
 
